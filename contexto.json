@@ -1,0 +1,77 @@
+{
+  "proyecto": "Sistema de Gestion RH - SEP/CORDE Tehuacan",
+  "version": "0.1.0",
+  "fecha_inicio": "2026-02-14",
+  "ultima_sesion": "2026-02-14",
+  "deadline": "3.5 semanas desde inicio",
+  "stack": {
+    "backend": "FastAPI + SQLAlchemy + SQLite",
+    "frontend": "React 18 + Vite + TailwindCSS v4",
+    "auth": "JWT (python-jose) + bcrypt 4.0.1 (passlib)",
+    "deploy": "Windows 10, red local, puerto 8080"
+  },
+  "estado_fases": {
+    "fase_1_setup_auth": "completada",
+    "fase_2_justificantes": "parcial - backend routes listos, falta PDF generation",
+    "fase_3_prestaciones_docs": "completada",
+    "fase_4_reportes_admin": "pendiente - placeholder en frontend"
+  },
+  "modulos": {
+    "autenticacion": { "estado": "completo", "backend": true, "frontend": true },
+    "empleados": { "estado": "completo", "backend": true, "frontend": true },
+    "justificantes": { "estado": "parcial", "backend": true, "frontend": true, "pendiente": ["PDF generation"] },
+    "prestaciones": { "estado": "completo", "backend": true, "frontend": true },
+    "documentos": { "estado": "completo", "backend": true, "frontend": true },
+    "adeudos": { "estado": "completo", "backend": true, "frontend": true },
+    "notificaciones": { "estado": "completo", "backend": true, "frontend": true },
+    "reportes": { "estado": "pendiente", "backend": false, "frontend": "placeholder" },
+    "calendario_laboral": { "estado": "completo", "backend": true, "frontend": false, "nota": "servicio interno, no tiene UI propia" },
+    "auditoria": { "estado": "completo", "backend": true, "frontend": false },
+    "pdf_generation": { "estado": "pendiente", "backend": false, "frontend": false }
+  },
+  "base_de_datos": {
+    "tablas": ["users", "empleados", "justificantes", "prestaciones", "documentos", "adeudos", "notificaciones", "contadores", "audit_log", "calendario_laboral"],
+    "ubicacion": "backend/data/empleados.db",
+    "usuarios_prueba": {
+      "root": { "username": "david", "password": "Admin123!" },
+      "admins": ["maria.lopez", "ana.garcia"],
+      "usuarios": ["juan.perez", "pedro.martinez", "carlos.ramirez"],
+      "password_default": "Temp123!"
+    },
+    "empleados_prueba": 5
+  },
+  "archivos_clave": {
+    "backend_entry": "backend/app/main.py",
+    "config": "backend/app/config.py",
+    "database": "backend/app/database.py",
+    "calendario_service": "backend/app/services/calendario_service.py",
+    "auth_service": "backend/app/services/auth_service.py",
+    "dia_economico_validator": "backend/app/validators/dia_economico_validator.py",
+    "prestacion_validator": "backend/app/validators/prestacion_validator.py",
+    "frontend_entry": "frontend/src/App.jsx",
+    "api_client": "frontend/src/services/api.js",
+    "auth_context": "frontend/src/contexts/AuthContext.jsx"
+  },
+  "notas_tecnicas": [
+    "passlib requiere bcrypt==4.0.1 (incompatible con 5.x)",
+    "TailwindCSS v4: @import 'tailwindcss' + @tailwindcss/vite plugin",
+    "Vite proxy: /api -> http://localhost:8080",
+    "Git NO inicializado aun"
+  ],
+  "pendientes_proxima_sesion": [
+    "PDF generation con PyPDF (llenar templates justificantes/prestaciones)",
+    "Modulo de reportes (Fase 4)",
+    "Testing unitario de validadores",
+    "CRUD calendario laboral desde UI",
+    "Inicializar git",
+    "Ingresar empleados reales cuando se tengan"
+  ],
+  "datos_pendientes_del_cliente": [
+    "Fechas exactas vacaciones administrativas 2025-2026",
+    "Lista completa de 49 empleados",
+    "Nombres de las 4 jefas RH",
+    "Logo SEP (opcional)",
+    "Nombre del inmueble para PDFs",
+    "Templates PDF oficiales (SEP-1.3.1.3/DRH/F/004 y F/005)"
+  ]
+}
