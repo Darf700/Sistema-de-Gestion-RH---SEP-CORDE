@@ -82,13 +82,13 @@ npm run dev
 |--------|--------|-------------|
 | Autenticacion | Completo | Login JWT, roles (ROOT/ADMIN/USUARIO), cambio/reset password |
 | Empleados | Completo | CRUD completo con contadores automaticos |
-| Justificantes | Backend listo | Dias economicos, permisos horas, ISSTEP, comisiones. Falta PDF generation |
+| Justificantes | Completo | Dias economicos, permisos horas, ISSTEP, comisiones + PDF generation (F/004) |
 | Prestaciones | Completo | 7 tipos, validaciones, aprobar/rechazar, upload documentos |
 | Documentos | Completo | Solicitudes bidireccionales empleado<->RH, upload archivos |
 | Adeudos | Completo | Dias pendientes, justificantes faltantes, documentos pendientes. Marcar/resolver con notificaciones |
 | Notificaciones | Completo | Polling cada 30s, marcar leidas, badge en navbar |
 | Reportes | Completo | 8 reportes (ausentismo, dias economicos, permisos horas, prestaciones, justificantes, adeudos, extemporaneos, estadisticas) + export Excel |
-| PDF Generation | Pendiente | Llenar templates PDF con PyPDF |
+| PDF Generation | Completo | Generacion PDF con reportlab: justificantes (F/004) y prestaciones (F/005) |
 | Calendario Laboral | Completo | Festivos 2026, vacaciones, dias laborales, periodos bloqueados |
 | Auditoria | Completo | Log de todas las acciones criticas |
 
@@ -102,3 +102,11 @@ Con el backend corriendo: http://localhost:8080/docs (Swagger UI automatico de F
 - TailwindCSS v4 usa `@import "tailwindcss"` + plugin `@tailwindcss/vite`
 - Vite proxy configurado: `/api` -> `http://localhost:8080`
 - Base de datos SQLite en `backend/data/empleados.db`
+- `api.js` usa baseURL vacio `''` para funcionar via proxy Vite (no `http://localhost:8080`)
+- Interceptor axios agrega trailing slash para evitar redirect 307 que pierde Authorization headers
+
+## Despliegue smith-dev (VM)
+
+- Acceso: SSH via Tailscale `100.118.252.111` (Kamrui/Proxmox) -> `smith@192.168.1.70`
+- Port forwarding: iptables en Kamrui redirige puertos 5173 y 8080 de Tailscale a smith-dev
+- URL: http://100.118.252.111:5173

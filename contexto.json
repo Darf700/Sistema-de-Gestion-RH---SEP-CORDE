@@ -82,12 +82,24 @@
     "Git inicializado - branch main",
     "Adeudos: dias_debe (int) + justificante_id (FK nullable) en lugar de monto (float)",
     "PDFs generados con reportlab, guardados en data/pdfs/{justificantes,prestaciones}/",
-    "Prestacion.pdf_path agregado via ALTER TABLE (migracion scripts/add_pdf_path_to_prestaciones.py)"
+    "Prestacion.pdf_path agregado via ALTER TABLE (migracion scripts/add_pdf_path_to_prestaciones.py)",
+    "api.js baseURL debe ser '' (vacio) para que funcione via proxy Vite, NO http://localhost:8080",
+    "FastAPI redirect 307 de /path a /path/ pierde Authorization header en axios browser - fix: interceptor trailing slash",
+    "Modelo Adeudo usa marcado_por_user_id (NO created_by_user_id)",
+    "Modelo Notificacion usa usuario_id (NO user_id)",
+    "Modelo User usa password_hash (NO hashed_password)"
   ],
+  "deploy_smith_dev": {
+    "acceso": "SSH via Tailscale: kamrui (100.118.252.111) -> smith@192.168.1.70",
+    "ssh_keys": "id_ed25519 (kamrui root), id_ed25519_smith (smith-dev)",
+    "port_forwarding": "iptables en Kamrui: Tailscale 5173->smith:5173, 8080->smith:8080",
+    "url": "http://100.118.252.111:5173",
+    "datos_prueba": "8 justificantes, 6 prestaciones, 4 adeudos, 6 notificaciones"
+  },
   "cambios_recientes": [
     {
       "fecha": "2026-02-18",
-      "descripcion": "Generacion PDF con reportlab: justificantes (F/004) y prestaciones (F/005)",
+      "descripcion": "PDF generation + fix api.js + deploy smith-dev",
       "archivos": [
         "backend/requirements.txt",
         "backend/app/config.py",
@@ -98,7 +110,8 @@
         "backend/app/routes/prestaciones.py",
         "backend/scripts/add_pdf_path_to_prestaciones.py (nuevo)",
         "frontend/src/pages/Justificantes.jsx",
-        "frontend/src/pages/Prestaciones.jsx"
+        "frontend/src/pages/Prestaciones.jsx",
+        "frontend/src/services/api.js (fix baseURL + trailing slash interceptor)"
       ]
     },
     {

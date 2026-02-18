@@ -2,6 +2,7 @@
 
 ## Objetivo
 Implementar generacion de PDFs para justificantes y prestaciones usando reportlab.
+Despliegue y pruebas en smith-dev (VM en Kamrui via Tailscale).
 
 ## Cambios realizados
 
@@ -40,12 +41,27 @@ Implementar generacion de PDFs para justificantes y prestaciones usando reportla
 
 ### Frontend
 
-9. **pages/Justificantes.jsx** - Boton descarga PDF en tabla:
-   - Icono Download por cada justificante
-   - Handler con responseType blob + descarga automatica
+9. **pages/Justificantes.jsx** - Boton descarga PDF en tabla
+10. **pages/Prestaciones.jsx** - Boton descarga PDF en tabla
+11. **services/api.js** - Fix critico:
+    - `baseURL` cambiado de `http://localhost:8080` a `''` (rutas relativas via proxy Vite)
+    - Interceptor que agrega trailing slash automatico para evitar redirect 307 que pierde headers Authorization
 
-10. **pages/Prestaciones.jsx** - Boton descarga PDF en tabla:
-    - Mismo patron que justificantes
+## Despliegue en smith-dev
+
+- **Acceso**: SSH via Tailscale (100.118.252.111) como jump host a smith@192.168.1.70
+- **Limpieza**: Eliminados repos y logs viejos (defectdojo, smith, e2e logs)
+- **Clone**: Repo clonado fresco desde GitHub
+- **Backend**: venv creado, dependencias instaladas, DB inicializada, seed + root user
+- **Frontend**: node_modules instalados, build verificado (3.46s)
+- **Port forwarding**: iptables en Kamrui redirige puertos 5173 y 8080 de Tailscale a smith-dev
+- **Datos de prueba**: 8 justificantes, 6 prestaciones, 4 adeudos, 6 notificaciones
+- **URL acceso**: http://100.118.252.111:5173
+
+## Bug encontrado y resuelto
+- FastAPI hace redirect 307 de `/api/empleados` a `/api/empleados/` (trailing slash)
+- Axios en browser no mantiene el header Authorization en el redirect
+- Fix: interceptor en api.js que agrega `/` automaticamente a todas las URLs
 
 ## Layout del PDF
 
@@ -57,14 +73,8 @@ Ambos formatos (F/004 y F/005) incluyen:
 - Tipo con checkboxes marcando el seleccionado
 - Detalles (fechas, dias, motivo, lugar, horas segun tipo)
 - Badge de estado con color
-- Seccion de firmas (Vo.Bo. Jefe Inmediato, Autorizo Titular, Recibido RH)
+- Seccion de firmas (3 columnas)
 - Nota al pie
-
-## Verificacion
-- Imports OK en todos los modulos
-- Generacion de PDFs de prueba exitosa (~3.2KB cada uno)
-- Rutas registradas correctamente en FastAPI
-- Migracion de DB ejecutada
 
 ## Pendientes
 - Testing unitario de validadores
