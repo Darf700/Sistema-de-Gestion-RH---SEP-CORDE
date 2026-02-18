@@ -1,6 +1,7 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -10,6 +11,7 @@ from ..models.justificante import Justificante, TipoJustificante
 from ..models.user import User
 from ..schemas.justificante import JustificanteCreate, JustificanteResponse, ValidacionResponse
 from ..services.calendario_service import calendario_service
+from ..services.pdf_service import generar_pdf_justificante, guardar_pdf
 from ..utils.dependencies import get_current_admin_user, get_current_user
 from ..utils.helpers import registrar_auditoria
 from ..validators.dia_economico_validator import validar_dia_economico
@@ -149,3 +151,43 @@ def obtener_justificante(
         raise HTTPException(status_code=403, detail="No tienes acceso a este justificante")
 
     return justificante
+
+
+@router.get("/{justificante_id}/pdf")
+def descargar_pdf_justificante(
+    justificante_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    justificante = db.query(Justificante).filter(Justificante.id == justificante_id).first()
+    if not justificante:
+        raise HTTPException(status_code=404, detail="Justificante no encontrado")
+
+    if (
+        current_user.role.value == "USUARIO"
+        and justificante.empleado_id != current_user.empleado_id
+    ):
+        raise HTTPException(status_code=403, detail="No tienes acceso a este justificante")
+
+    empleado = db.query(Empleado).filter(Empleado.id == justificante.empleado_id).first()
+    if not empleado:
+        raise HTTPException(status_code=404, detail="Empleado no encontrado")
+
+    pdf_buffer = generar_pdf_justificante(justificante, empleado)
+
+    # Guardar en disco y actualizar registro
+    filename = f"justificante_{justificante.id}.pdf"
+    saved_path = guardar_pdf(pdf_buffer, "justificantes", filename)
+    justificante.pdf_path = saved_path
+    db.commit()
+
+    registrar_auditoria(
+        db, current_user.id, current_user.username,
+        f"descargo PDF justificante #{justificante.id}", "justificantes", justificante.id,
+    )
+
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )

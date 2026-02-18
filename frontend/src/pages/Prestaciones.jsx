@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Gift, Plus, X, Check, XCircle } from 'lucide-react';
+import { Download, Gift, Plus, X, Check, XCircle } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -67,6 +67,22 @@ export default function PrestacionesPage() {
       fetchPrestaciones();
     } catch (e) {
       alert(e.response?.data?.detail || 'Error');
+    }
+  };
+
+  const handleDescargarPDF = async (id) => {
+    try {
+      const response = await api.get(`/api/prestaciones/${id}/pdf`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `prestacion_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      alert(e.response?.data?.detail || 'Error al descargar PDF');
     }
   };
 
@@ -154,6 +170,7 @@ export default function PrestacionesPage() {
               <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Dias</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Estado</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Fecha</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">PDF</th>
               {isAdmin && <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Acciones</th>}
             </tr>
           </thead>
@@ -171,6 +188,11 @@ export default function PrestacionesPage() {
                   }`}>{p.estado}</span>
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-500">{new Date(p.created_at).toLocaleDateString()}</td>
+                <td className="px-4 py-3 text-sm">
+                  <button onClick={() => handleDescargarPDF(p.id)} className="text-blue-600 hover:text-blue-700" title="Descargar PDF">
+                    <Download size={18} />
+                  </button>
+                </td>
                 {isAdmin && (
                   <td className="px-4 py-3 text-sm">
                     {p.estado === 'Pendiente' && (
@@ -184,7 +206,7 @@ export default function PrestacionesPage() {
               </tr>
             ))}
             {prestaciones.length === 0 && (
-              <tr><td colSpan={isAdmin ? 6 : 5} className="px-4 py-8 text-center text-gray-400">No hay prestaciones</td></tr>
+              <tr><td colSpan={isAdmin ? 7 : 6} className="px-4 py-8 text-center text-gray-400">No hay prestaciones</td></tr>
             )}
           </tbody>
         </table>

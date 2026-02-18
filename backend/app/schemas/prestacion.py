@@ -32,6 +32,7 @@ class PrestacionResponse(BaseModel):
     estado: EstadoPrestacion
     aprobado_por_user_id: Optional[int] = None
     motivo_rechazo: Optional[str] = None
+    pdf_path: Optional[str] = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

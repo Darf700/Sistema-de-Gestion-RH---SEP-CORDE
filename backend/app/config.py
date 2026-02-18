@@ -49,6 +49,12 @@ class Settings(BaseSettings):
         (12, 25),  # Navidad
     ]
 
+    # PDF
+    PDF_INMUEBLE: str = "CORDE TEHUACAN"
+    PDF_INSTITUCION: str = "SEP del Estado de Puebla"
+    PDF_COORDINACION: str = "Coordinacion Regional de Desarrollo Educativo Tehuacan"
+    PDF_DIR: str = "./data/pdfs"
+
     # Vacaciones Administrativas 2025-2026 (PLACEHOLDER - actualizar con fechas reales)
     VACACIONES_2026: List[Tuple[str, str]] = [
         ("2026-07-17", "2026-08-18"),  # Verano

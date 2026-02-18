@@ -41,6 +41,8 @@ class Prestacion(Base):
     aprobado_por_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     motivo_rechazo = Column(Text, nullable=True)
 
+    pdf_path = Column(String, nullable=True)
+
     created_by_user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

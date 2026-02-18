@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from ..config import settings
@@ -20,6 +21,7 @@ from ..schemas.prestacion import (
 )
 from ..services.calendario_service import calendario_service
 from ..services.notificacion_service import crear_notificacion
+from ..services.pdf_service import generar_pdf_prestacion, guardar_pdf
 from ..utils.dependencies import get_current_admin_user, get_current_user
 from ..utils.helpers import registrar_auditoria
 from ..validators.prestacion_validator import (
@@ -274,6 +276,46 @@ def obtener_prestacion(
         raise HTTPException(status_code=403, detail="No tienes acceso a esta prestacion")
 
     return prestacion
+
+
+@router.get("/{prestacion_id}/pdf")
+def descargar_pdf_prestacion(
+    prestacion_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    prestacion = db.query(Prestacion).filter(Prestacion.id == prestacion_id).first()
+    if not prestacion:
+        raise HTTPException(status_code=404, detail="Prestacion no encontrada")
+
+    if (
+        current_user.role.value == "USUARIO"
+        and prestacion.empleado_id != current_user.empleado_id
+    ):
+        raise HTTPException(status_code=403, detail="No tienes acceso a esta prestacion")
+
+    empleado = db.query(Empleado).filter(Empleado.id == prestacion.empleado_id).first()
+    if not empleado:
+        raise HTTPException(status_code=404, detail="Empleado no encontrado")
+
+    pdf_buffer = generar_pdf_prestacion(prestacion, empleado)
+
+    # Guardar en disco y actualizar registro
+    filename = f"prestacion_{prestacion.id}.pdf"
+    saved_path = guardar_pdf(pdf_buffer, "prestaciones", filename)
+    prestacion.pdf_path = saved_path
+    db.commit()
+
+    registrar_auditoria(
+        db, current_user.id, current_user.username,
+        f"descargo PDF prestacion #{prestacion.id}", "prestaciones", prestacion.id,
+    )
+
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 def _actualizar_contadores_prestacion(db: Session, prestacion: Prestacion):
