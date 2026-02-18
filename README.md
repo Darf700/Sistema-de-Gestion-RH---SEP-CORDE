@@ -85,9 +85,9 @@ npm run dev
 | Justificantes | Backend listo | Dias economicos, permisos horas, ISSTEP, comisiones. Falta PDF generation |
 | Prestaciones | Completo | 7 tipos, validaciones, aprobar/rechazar, upload documentos |
 | Documentos | Completo | Solicitudes bidireccionales empleado<->RH, upload archivos |
-| Adeudos | Completo | Marcar/resolver adeudos con notificaciones |
+| Adeudos | Completo | Dias pendientes, justificantes faltantes, documentos pendientes. Marcar/resolver con notificaciones |
 | Notificaciones | Completo | Polling cada 30s, marcar leidas, badge en navbar |
-| Reportes | Placeholder | Pendiente Fase 4 |
+| Reportes | Completo | 8 reportes (ausentismo, dias economicos, permisos horas, prestaciones, justificantes, adeudos, extemporaneos, estadisticas) + export Excel |
 | PDF Generation | Pendiente | Llenar templates PDF con PyPDF |
 | Calendario Laboral | Completo | Festivos 2026, vacaciones, dias laborales, periodos bloqueados |
 | Auditoria | Completo | Log de todas las acciones criticas |

@@ -10,13 +10,14 @@ class AdeudoCreate(BaseModel):
     empleado_id: int
     tipo: str
     descripcion: str
-    monto: Optional[float] = None
+    dias_debe: int = 0
+    justificante_id: Optional[int] = None
 
 
 class AdeudoUpdate(BaseModel):
     estado: Optional[EstadoAdeudo] = None
     descripcion: Optional[str] = None
-    monto: Optional[float] = None
+    dias_debe: Optional[int] = None
 
 
 class AdeudoResponse(BaseModel):
@@ -24,7 +25,8 @@ class AdeudoResponse(BaseModel):
     empleado_id: int
     tipo: str
     descripcion: str
-    monto: Optional[float] = None
+    dias_debe: int = 0
+    justificante_id: Optional[int] = None
     estado: EstadoAdeudo
     marcado_por_user_id: int
     fecha_marcado: datetime

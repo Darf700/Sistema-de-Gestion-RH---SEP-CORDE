@@ -1,8 +1,8 @@
 {
   "proyecto": "Sistema de Gestion RH - SEP/CORDE Tehuacan",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "fecha_inicio": "2026-02-14",
-  "ultima_sesion": "2026-02-14",
+  "ultima_sesion": "2026-02-16",
   "deadline": "3.5 semanas desde inicio",
   "stack": {
     "backend": "FastAPI + SQLAlchemy + SQLite",
@@ -14,7 +14,7 @@
     "fase_1_setup_auth": "completada",
     "fase_2_justificantes": "parcial - backend routes listos, falta PDF generation",
     "fase_3_prestaciones_docs": "completada",
-    "fase_4_reportes_admin": "pendiente - placeholder en frontend"
+    "fase_4_reportes_admin": "completada - 8 reportes + export Excel"
   },
   "modulos": {
     "autenticacion": { "estado": "completo", "backend": true, "frontend": true },
@@ -22,9 +22,20 @@
     "justificantes": { "estado": "parcial", "backend": true, "frontend": true, "pendiente": ["PDF generation"] },
     "prestaciones": { "estado": "completo", "backend": true, "frontend": true },
     "documentos": { "estado": "completo", "backend": true, "frontend": true },
-    "adeudos": { "estado": "completo", "backend": true, "frontend": true },
+    "adeudos": {
+      "estado": "completo",
+      "backend": true,
+      "frontend": true,
+      "nota": "Rediseñado 2026-02-16: monto eliminado, reemplazado por dias_debe + justificante_id"
+    },
     "notificaciones": { "estado": "completo", "backend": true, "frontend": true },
-    "reportes": { "estado": "pendiente", "backend": false, "frontend": "placeholder" },
+    "reportes": {
+      "estado": "completo",
+      "backend": true,
+      "frontend": true,
+      "tipos": ["ausentismo", "dias-economicos", "permisos-horas", "prestaciones", "justificantes", "adeudos", "extemporaneos", "estadisticas-justificantes"],
+      "export": "Excel via openpyxl"
+    },
     "calendario_laboral": { "estado": "completo", "backend": true, "frontend": false, "nota": "servicio interno, no tiene UI propia" },
     "auditoria": { "estado": "completo", "backend": true, "frontend": false },
     "pdf_generation": { "estado": "pendiente", "backend": false, "frontend": false }
@@ -48,6 +59,8 @@
     "auth_service": "backend/app/services/auth_service.py",
     "dia_economico_validator": "backend/app/validators/dia_economico_validator.py",
     "prestacion_validator": "backend/app/validators/prestacion_validator.py",
+    "export_service": "backend/app/services/export_service.py",
+    "reportes_routes": "backend/app/routes/reportes.py",
     "frontend_entry": "frontend/src/App.jsx",
     "api_client": "frontend/src/services/api.js",
     "auth_context": "frontend/src/contexts/AuthContext.jsx"
@@ -56,14 +69,28 @@
     "passlib requiere bcrypt==4.0.1 (incompatible con 5.x)",
     "TailwindCSS v4: @import 'tailwindcss' + @tailwindcss/vite plugin",
     "Vite proxy: /api -> http://localhost:8080",
-    "Git NO inicializado aun"
+    "Git inicializado - branch main",
+    "Adeudos: dias_debe (int) + justificante_id (FK nullable) en lugar de monto (float)"
+  ],
+  "cambios_recientes": [
+    {
+      "fecha": "2026-02-16",
+      "descripcion": "Rediseno de Adeudos: monto -> dias_debe + justificante_id",
+      "archivos": [
+        "backend/app/models/adeudo.py",
+        "backend/app/schemas/adeudo.py",
+        "backend/app/schemas/reporte.py",
+        "backend/app/routes/adeudos.py",
+        "backend/app/routes/reportes.py",
+        "frontend/src/pages/Adeudos.jsx",
+        "frontend/src/pages/Reportes.jsx"
+      ]
+    }
   ],
   "pendientes_proxima_sesion": [
     "PDF generation con PyPDF (llenar templates justificantes/prestaciones)",
-    "Modulo de reportes (Fase 4)",
     "Testing unitario de validadores",
     "CRUD calendario laboral desde UI",
-    "Inicializar git",
     "Ingresar empleados reales cuando se tengan"
   ],
   "datos_pendientes_del_cliente": [

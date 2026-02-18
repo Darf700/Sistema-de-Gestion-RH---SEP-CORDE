@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import settings
 from .database import create_tables
-from .routes import adeudos, auth, documentos, empleados, justificantes, notificaciones, prestaciones
+from .routes import adeudos, auth, documentos, empleados, justificantes, notificaciones, prestaciones, reportes
 
 # Crear tablas al iniciar
 create_tables()
@@ -31,6 +31,7 @@ app.include_router(prestaciones.router, prefix="/api/prestaciones", tags=["prest
 app.include_router(documentos.router, prefix="/api/documentos", tags=["documentos"])
 app.include_router(adeudos.router, prefix="/api/adeudos", tags=["adeudos"])
 app.include_router(notificaciones.router, prefix="/api/notificaciones", tags=["notificaciones"])
+app.include_router(reportes.router, prefix="/api/reportes", tags=["reportes"])
 
 
 @app.get("/")

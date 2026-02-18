@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Enum as SQLEnum, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, DateTime, Enum as SQLEnum, ForeignKey, Integer, String, Text
 
 from ..database import Base
 
@@ -11,6 +11,12 @@ class EstadoAdeudo(str, enum.Enum):
     RESUELTO = "Resuelto"
 
 
+class TipoAdeudo(str, enum.Enum):
+    DIAS_PENDIENTES = "Dias pendientes"
+    JUSTIFICANTE_NO_ENTREGADO = "Justificante no entregado"
+    DOCUMENTO_PENDIENTE = "Documento pendiente"
+
+
 class Adeudo(Base):
     __tablename__ = "adeudos"
 
@@ -18,7 +24,8 @@ class Adeudo(Base):
     empleado_id = Column(Integer, ForeignKey("empleados.id"), nullable=False)
     tipo = Column(String, nullable=False)
     descripcion = Column(Text, nullable=False)
-    monto = Column(Float, nullable=True)
+    dias_debe = Column(Integer, default=0)
+    justificante_id = Column(Integer, ForeignKey("justificantes.id"), nullable=True)
 
     estado = Column(SQLEnum(EstadoAdeudo), default=EstadoAdeudo.PENDIENTE)
     marcado_por_user_id = Column(Integer, ForeignKey("users.id"), nullable=False)

@@ -7,7 +7,7 @@ export default function AdeudosPage() {
   const { isAdmin } = useAuth();
   const [adeudos, setAdeudos] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ empleado_id: '', tipo: '', descripcion: '', monto: '' });
+  const [form, setForm] = useState({ empleado_id: '', tipo: '', descripcion: '', dias_debe: '' });
   const [empleados, setEmpleados] = useState([]);
   const [error, setError] = useState('');
 
@@ -29,10 +29,10 @@ export default function AdeudosPage() {
         empleado_id: parseInt(form.empleado_id),
         tipo: form.tipo,
         descripcion: form.descripcion,
-        monto: form.monto ? parseFloat(form.monto) : null,
+        dias_debe: form.dias_debe ? parseInt(form.dias_debe) : 0,
       });
       setShowForm(false);
-      setForm({ empleado_id: '', tipo: '', descripcion: '', monto: '' });
+      setForm({ empleado_id: '', tipo: '', descripcion: '', dias_debe: '' });
       fetchAdeudos();
     } catch (e) {
       setError(e.response?.data?.detail || 'Error');
@@ -87,9 +87,9 @@ export default function AdeudosPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
               <select value={form.tipo} onChange={e => setForm({...form, tipo: e.target.value})} className="w-full border border-gray-300 rounded-lg px-3 py-2">
                 <option value="">Seleccionar...</option>
+                <option value="Dias pendientes">Dias pendientes</option>
                 <option value="Justificante no entregado">Justificante no entregado</option>
                 <option value="Documento pendiente">Documento pendiente</option>
-                <option value="Otro">Otro</option>
               </select>
             </div>
             <div>
@@ -97,8 +97,8 @@ export default function AdeudosPage() {
               <input type="text" value={form.descripcion} onChange={e => setForm({...form, descripcion: e.target.value})} className="w-full border border-gray-300 rounded-lg px-3 py-2" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Monto (opcional)</label>
-              <input type="number" value={form.monto} onChange={e => setForm({...form, monto: e.target.value})} className="w-full border border-gray-300 rounded-lg px-3 py-2" />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Dias que debe</label>
+              <input type="number" min="0" value={form.dias_debe} onChange={e => setForm({...form, dias_debe: e.target.value})} className="w-full border border-gray-300 rounded-lg px-3 py-2" />
             </div>
           </div>
           {error && <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">{error}</div>}
@@ -114,7 +114,7 @@ export default function AdeudosPage() {
             <tr>
               <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Tipo</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Descripcion</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Monto</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Dias</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Estado</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Fecha</th>
               {isAdmin && <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Acciones</th>}
@@ -125,7 +125,7 @@ export default function AdeudosPage() {
               <tr key={a.id} className="border-b border-gray-100 hover:bg-gray-50">
                 <td className="px-4 py-3 text-sm">{a.tipo}</td>
                 <td className="px-4 py-3 text-sm">{a.descripcion}</td>
-                <td className="px-4 py-3 text-sm">{a.monto ? `$${a.monto}` : '-'}</td>
+                <td className="px-4 py-3 text-sm">{a.dias_debe || 0}</td>
                 <td className="px-4 py-3 text-sm">
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     a.estado === 'Pendiente' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'

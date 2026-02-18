@@ -49,7 +49,8 @@ def crear_adeudo(
         empleado_id=data.empleado_id,
         tipo=data.tipo,
         descripcion=data.descripcion,
-        monto=data.monto,
+        dias_debe=data.dias_debe,
+        justificante_id=data.justificante_id,
         marcado_por_user_id=current_user.id,
     )
     db.add(adeudo)
@@ -61,7 +62,7 @@ def crear_adeudo(
     if user_empleado:
         crear_notificacion(
             db, user_empleado.id, "adeudo_nuevo",
-            f"Tienes un nuevo adeudo: {data.tipo} - {data.descripcion}",
+            f"Tienes un nuevo adeudo: {data.tipo} - {data.descripcion} ({data.dias_debe} dias)",
             enlace=f"/empleado/adeudos",
         )
 
@@ -91,8 +92,8 @@ def actualizar_adeudo(
             adeudo.fecha_resuelto = datetime.utcnow()
     if data.descripcion:
         adeudo.descripcion = data.descripcion
-    if data.monto is not None:
-        adeudo.monto = data.monto
+    if data.dias_debe is not None:
+        adeudo.dias_debe = data.dias_debe
 
     db.commit()
     db.refresh(adeudo)
